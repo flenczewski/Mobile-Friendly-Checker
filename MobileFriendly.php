@@ -1,10 +1,10 @@
 <?php
 /**
- * Mobile Friendly Multi Checker v 0.2
+ * Mobile Friendly Multi Checker v 0.21
  *
  * Keywords: Page Speed Insights, API, Multi Curl, mobile ready, mobile friendly
  *
- * Version: 0.2
+ * Version: 0.21
  * Author: fabian.lenczewski@gmail.com
  * Since: 2015-03-18 19:36
  */
@@ -16,8 +16,16 @@ class MobileFriendly {
      */
     public $apiKey;
 
+    /**
+     * URL list to chceck
+     * @var array
+     */
     protected $urlList= array();
 
+    /**
+     * max chunked part from big lists
+     * @var int
+     */
     protected $packSize = 10;
 
     /**
@@ -28,8 +36,6 @@ class MobileFriendly {
     public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
-        $this->_memcache = new Memcache;
-        $this->_memcache->connect('localhost', '11211');
     }
 
     public function addUrl($url)
@@ -53,6 +59,9 @@ class MobileFriendly {
     {
         // memcached key
         $mcKey = md5('MobileFriendly-URLS-' . serialize($this->urlList));
+
+        $this->_memcache = new Memcache;
+        $this->_memcache->connect('localhost', '11211');
 
         $res = $this->_memcache->get($mcKey);
         if ( !$res || $regenerate) {
